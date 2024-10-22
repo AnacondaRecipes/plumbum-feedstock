@@ -1,5 +1,5 @@
 {% set name = "plumbum" %}
-{% set version = "1.8.1" %}
+{% set version = "1.9.0" %}
 
 package:
   name: {{ name|lower }}
@@ -7,23 +7,26 @@ package:
 
 source:
   url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  sha256: 88a40fc69247d0cd585e21ca169b3820f46c484535102e16455d2202727bb37b
+  sha256: e640062b72642c3873bd5bdc3effed75ba4d3c70ef6b6a7b907357a84d909219
 
 build:
-  noarch: python
+  skip: True                      # [py<38]
   number: 0
   script: {{ PYTHON }} -m pip install . -vv
 
 requirements:
   host:
     - pip
-    - python >=3.6
+    - python
     - hatchling
     - hatch-vcs
   run:
-    - python >=3.6
-    - pywin32-on-windows
-    - paramiko
+    - python
+    - pywin32                     # [win]
+    - importlib_resources         # [py<39]
+  run_constrained:
+    - sphinx >=4.0.0
+    - sphinx-rtd-theme >=1.0.0
 
 test:
   imports:
@@ -37,15 +40,25 @@ test:
     - plumbum.path
   commands:
     - pip check
+    - pytest -k "not (test_cwd or test_mixing_chdir or test_contains or test_path or test_iter_lines_buffer_size)"
   requires:
     - pip
+    - pytest >=6.0
+    - psutil
+    - pytest-mock
+    - pytest-timeout
+    - pytest-cov
+    - paramiko
+  source_files:
+    - tests/
+    - pyproject.toml
 
 about:
   home: https://plumbum.readthedocs.io
   license: MIT
+  license_family: MIT
   license_file: LICENSE
   summary: 'Plumbum: shell combinators library'
-
   description: |
     Apart from shell-like syntax and handy shortcuts, the library provides local and
     remote command execution (over SSH), local and remote file-system paths, easy
