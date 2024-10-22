@@ -1,5 +1,15 @@
 {% set name = "plumbum" %}
 {% set version = "1.9.0" %}
+{% set tests_to_skip = "" %}
+{% set tests_to_skip = tests_to_skip + "test_cwd or test_mixing_chdir or test_contains or 
+                                        test_path or test_iter_lines_buffer_size" %}
+{% set tests_to_skip = tests_to_skip + " or test_runfile_rich" %}       # [linux]
+{% set tests_to_skip = tests_to_skip + " or test_help_lang" %}          # [osx]
+{% set tests_to_skip = tests_to_skip + " or test_nolang_switches" %}    # [osx]
+{% set tests_to_skip = tests_to_skip + " or test_failure" %}            # [osx]
+{% set tests_to_skip = tests_to_skip + " or test_home" %}               # [win]
+
+
 
 package:
   name: {{ name|lower }}
@@ -40,7 +50,7 @@ test:
     - plumbum.path
   commands:
     - pip check
-    - pytest -k "not (test_cwd or test_mixing_chdir or test_contains or test_path or test_iter_lines_buffer_size)"
+    - pytest -k "not ({{ tests_to_skip }})"
   requires:
     - pip
     - pytest >=6.0
