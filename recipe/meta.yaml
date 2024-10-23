@@ -34,9 +34,6 @@ requirements:
     - python
     - pywin32                     # [win]
     - importlib_resources         # [py<39]
-  run_constrained:
-    - sphinx >=4.0.0
-    - sphinx-rtd-theme >=1.0.0
 
 test:
   imports:
